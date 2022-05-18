@@ -1,0 +1,73 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/user/Desktop/Programming/HDL/project0/simulation/qsim
+vfa
+Z1 !s110 1652835292
+!i10b 1
+!s100 Q?TP[YCbT?Xia[e5;3EW61
+IQ<h^?:8MBaMmcU`AKj=G20
+Z2 VDg1SIo80bB@j0V0VzS_@n1
+R0
+Z3 w1652835291
+Z4 8project0.vo
+Z5 Fproject0.vo
+L0 32
+Z6 OV;L;10.5b;63
+r1
+!s85 0
+31
+Z7 !s108 1652835292.000000
+Z8 !s107 project0.vo|
+Z9 !s90 -work|work|project0.vo|
+!i113 1
+Z10 o-work work
+Z11 tCvgOpt 0
+vfa_vlg_vec_tst
+R1
+!i10b 1
+!s100 ACA>R[RN_Uhl4EFGlaz@42
+Ih<2E`fiI3iA2L^3bcTK:Q2
+R2
+R0
+w1652835290
+8fa.vwf.vt
+Ffa.vwf.vt
+L0 30
+R6
+r1
+!s85 0
+31
+R7
+!s107 fa.vwf.vt|
+!s90 -work|work|fa.vwf.vt|
+!i113 1
+R10
+R11
+vhard_block
+R1
+!i10b 1
+!s100 z<i24@<O:c_E_JEGV[We@0
+IiNT^`bdOEM8bon>jWLBMD3
+R2
+R0
+R3
+R4
+R5
+L0 177
+R6
+r1
+!s85 0
+31
+R7
+R8
+R9
+!i113 1
+R10
+R11

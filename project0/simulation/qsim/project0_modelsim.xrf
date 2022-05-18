@@ -1,0 +1,15 @@
+vendor_name = ModelSim
+source_file = 1, C:/Users/user/Desktop/Programming/HDL/project0/fa.v
+source_file = 1, C:/Users/user/Desktop/Programming/HDL/project0/db/project0.cbx.xml
+design_name = fa
+instance = comp, \s~output , s~output, fa, 1
+instance = comp, \cout~output , cout~output, fa, 1
+instance = comp, \a~input , a~input, fa, 1
+instance = comp, \cin~input , cin~input, fa, 1
+instance = comp, \b~input , b~input, fa, 1
+instance = comp, \s~0 , s~0, fa, 1
+instance = comp, \cout~0 , cout~0, fa, 1
+design_name = hard_block
+instance = comp, \~ALTERA_ASDO_DATA1~~ibuf , ~ALTERA_ASDO_DATA1~~ibuf, hard_block, 1
+instance = comp, \~ALTERA_FLASH_nCE_nCSO~~ibuf , ~ALTERA_FLASH_nCE_nCSO~~ibuf, hard_block, 1
+instance = comp, \~ALTERA_DATA0~~ibuf , ~ALTERA_DATA0~~ibuf, hard_block, 1
