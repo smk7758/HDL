@@ -1,5 +1,5 @@
 Analysis & Synthesis report for project0
-Wed May 18 10:45:16 2022
+Wed May 18 11:55:23 2022
 Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
@@ -14,11 +14,12 @@ Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
   6. Analysis & Synthesis Resource Usage Summary
   7. Analysis & Synthesis Resource Utilization by Entity
   8. General Register Statistics
-  9. Parameter Settings for User Entity Instance: fa8:adder
- 10. Port Connectivity Checks: "fa8:adder"
+  9. Inverted Register Statistics
+ 10. Parameter Settings for User Entity Instance: Top-level Entity: |stage
  11. Post-Synthesis Netlist Statistics for Top Partition
  12. Elapsed Time Per Partition
  13. Analysis & Synthesis Messages
+ 14. Analysis & Synthesis Suppressed Messages
 
 
 
@@ -45,16 +46,16 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------------------------------------------------------------+
 ; Analysis & Synthesis Summary                                                     ;
 +------------------------------------+---------------------------------------------+
-; Analysis & Synthesis Status        ; Successful - Wed May 18 10:45:16 2022       ;
+; Analysis & Synthesis Status        ; Successful - Wed May 18 11:55:23 2022       ;
 ; Quartus Prime Version              ; 19.1.0 Build 670 09/22/2019 SJ Lite Edition ;
 ; Revision Name                      ; project0                                    ;
-; Top-level Entity Name              ; counter                                     ;
+; Top-level Entity Name              ; stage                                       ;
 ; Family                             ; Cyclone IV E                                ;
-; Total logic elements               ; 10                                          ;
-;     Total combinational functions  ; 10                                          ;
-;     Dedicated logic registers      ; 8                                           ;
-; Total registers                    ; 8                                           ;
-; Total pins                         ; 10                                          ;
+; Total logic elements               ; 11                                          ;
+;     Total combinational functions  ; 11                                          ;
+;     Dedicated logic registers      ; 5                                           ;
+; Total registers                    ; 5                                           ;
+; Total pins                         ; 9                                           ;
 ; Total virtual pins                 ; 0                                           ;
 ; Total memory bits                  ; 0                                           ;
 ; Embedded Multiplier 9-bit elements ; 0                                           ;
@@ -68,7 +69,7 @@ https://fpgasoftware.intel.com/eula.
 ; Option                                                           ; Setting            ; Default Value      ;
 +------------------------------------------------------------------+--------------------+--------------------+
 ; Device                                                           ; EP4CE6E22C8        ;                    ;
-; Top-level entity name                                            ; counter            ; project0           ;
+; Top-level entity name                                            ; stage              ; project0           ;
 ; Family name                                                      ; Cyclone IV E       ; Cyclone V          ;
 ; Use smart compilation                                            ; Off                ; Off                ;
 ; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
@@ -165,58 +166,54 @@ https://fpgasoftware.intel.com/eula.
 +----------------------------+-------------+
 
 
-+--------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Source Files Read                                                                                                           ;
-+----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
-; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                             ; Library ;
-+----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
-; fa.v                             ; yes             ; User Verilog HDL File  ; C:/Users/user/Desktop/Programming/HDL/project0/fa.v      ;         ;
-; fa8.v                            ; yes             ; User Verilog HDL File  ; C:/Users/user/Desktop/Programming/HDL/project0/fa8.v     ;         ;
-; counter.v                        ; yes             ; User Verilog HDL File  ; C:/Users/user/Desktop/Programming/HDL/project0/counter.v ;         ;
-+----------------------------------+-----------------+------------------------+----------------------------------------------------------+---------+
++------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                         ;
++----------------------------------+-----------------+------------------------+--------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                           ; Library ;
++----------------------------------+-----------------+------------------------+--------------------------------------------------------+---------+
+; stage.v                          ; yes             ; User Verilog HDL File  ; C:/Users/user/Desktop/Programming/HDL/project0/stage.v ;         ;
++----------------------------------+-----------------+------------------------+--------------------------------------------------------+---------+
 
 
-+---------------------------------------------------------+
-; Analysis & Synthesis Resource Usage Summary             ;
-+---------------------------------------------+-----------+
-; Resource                                    ; Usage     ;
-+---------------------------------------------+-----------+
-; Estimated Total logic elements              ; 10        ;
-;                                             ;           ;
-; Total combinational functions               ; 10        ;
-; Logic element usage by number of LUT inputs ;           ;
-;     -- 4 input functions                    ; 4         ;
-;     -- 3 input functions                    ; 2         ;
-;     -- <=2 input functions                  ; 4         ;
-;                                             ;           ;
-; Logic elements by mode                      ;           ;
-;     -- normal mode                          ; 10        ;
-;     -- arithmetic mode                      ; 0         ;
-;                                             ;           ;
-; Total registers                             ; 8         ;
-;     -- Dedicated logic registers            ; 8         ;
-;     -- I/O registers                        ; 0         ;
-;                                             ;           ;
-; I/O pins                                    ; 10        ;
-;                                             ;           ;
-; Embedded Multiplier 9-bit elements          ; 0         ;
-;                                             ;           ;
-; Maximum fan-out node                        ; clk~input ;
-; Maximum fan-out                             ; 8         ;
-; Total fan-out                               ; 71        ;
-; Average fan-out                             ; 1.87      ;
-+---------------------------------------------+-----------+
++--------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary            ;
++---------------------------------------------+----------+
+; Resource                                    ; Usage    ;
++---------------------------------------------+----------+
+; Estimated Total logic elements              ; 11       ;
+;                                             ;          ;
+; Total combinational functions               ; 11       ;
+; Logic element usage by number of LUT inputs ;          ;
+;     -- 4 input functions                    ; 5        ;
+;     -- 3 input functions                    ; 5        ;
+;     -- <=2 input functions                  ; 1        ;
+;                                             ;          ;
+; Logic elements by mode                      ;          ;
+;     -- normal mode                          ; 11       ;
+;     -- arithmetic mode                      ; 0        ;
+;                                             ;          ;
+; Total registers                             ; 5        ;
+;     -- Dedicated logic registers            ; 5        ;
+;     -- I/O registers                        ; 0        ;
+;                                             ;          ;
+; I/O pins                                    ; 9        ;
+;                                             ;          ;
+; Embedded Multiplier 9-bit elements          ; 0        ;
+;                                             ;          ;
+; Maximum fan-out node                        ; state[4] ;
+; Maximum fan-out                             ; 7        ;
+; Total fan-out                               ; 66       ;
+; Average fan-out                             ; 1.94     ;
++---------------------------------------------+----------+
 
 
-+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                       ;
-+----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+--------------------------------------+-------------+--------------+
-; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                  ; Entity Name ; Library Name ;
-+----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+--------------------------------------+-------------+--------------+
-; |counter                   ; 10 (9)              ; 8 (8)                     ; 0           ; 0            ; 0       ; 0         ; 10   ; 0            ; |counter                             ; counter     ; work         ;
-;    |fa8:adder|             ; 1 (0)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |counter|fa8:adder                   ; fa8         ; work         ;
-;       |fa:gen_fa8[3].fa0|  ; 1 (1)               ; 0 (0)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |counter|fa8:adder|fa:gen_fa8[3].fa0 ; fa          ; work         ;
-+----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+--------------------------------------+-------------+--------------+
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                      ;
++----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------+-------------+--------------+
+; Compilation Hierarchy Node ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name ; Entity Name ; Library Name ;
++----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------+-------------+--------------+
+; |stage                     ; 11 (11)             ; 5 (5)                     ; 0           ; 0            ; 0       ; 0         ; 9    ; 0            ; |stage              ; stage       ; work         ;
++----------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+---------------------+-------------+--------------+
 Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
 
 
@@ -225,35 +222,38 @@ Note: For table entries with two numbers listed, the numbers in parentheses indi
 +----------------------------------------------+-------+
 ; Statistic                                    ; Value ;
 +----------------------------------------------+-------+
-; Total registers                              ; 8     ;
+; Total registers                              ; 5     ;
 ; Number of registers using Synchronous Clear  ; 0     ;
 ; Number of registers using Synchronous Load   ; 0     ;
-; Number of registers using Asynchronous Clear ; 8     ;
+; Number of registers using Asynchronous Clear ; 5     ;
 ; Number of registers using Asynchronous Load  ; 0     ;
 ; Number of registers using Clock Enable       ; 0     ;
 ; Number of registers using Preset             ; 0     ;
 +----------------------------------------------+-------+
 
 
-+--------------------------------------------------------+
-; Parameter Settings for User Entity Instance: fa8:adder ;
-+----------------+-------+-------------------------------+
-; Parameter Name ; Value ; Type                          ;
-+----------------+-------+-------------------------------+
-; width          ; 8     ; Signed Integer                ;
-+----------------+-------+-------------------------------+
++--------------------------------------------------+
+; Inverted Register Statistics                     ;
++----------------------------------------+---------+
+; Inverted Register                      ; Fan out ;
++----------------------------------------+---------+
+; state[4]                               ; 7       ;
+; Total number of inverted registers = 1 ;         ;
++----------------------------------------+---------+
+
+
++-----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: Top-level Entity: |stage ;
++----------------+-------+----------------------------------------------+
+; Parameter Name ; Value ; Type                                         ;
++----------------+-------+----------------------------------------------+
+; waits_s        ; 10000 ; Unsigned Binary                              ;
+; fetcha_s       ; 01000 ; Unsigned Binary                              ;
+; fetchb_s       ; 00100 ; Unsigned Binary                              ;
+; execa_s        ; 00010 ; Unsigned Binary                              ;
+; execb_s        ; 00001 ; Unsigned Binary                              ;
++----------------+-------+----------------------------------------------+
 Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
-
-
-+----------------------------------------------------------------------------------------------------------------+
-; Port Connectivity Checks: "fa8:adder"                                                                          ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
-; Port ; Type   ; Severity ; Details                                                                             ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
-; b    ; Input  ; Info     ; Stuck at GND                                                                        ;
-; cin  ; Input  ; Info     ; Stuck at VCC                                                                        ;
-; cout ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
-+------+--------+----------+-------------------------------------------------------------------------------------+
 
 
 +-----------------------------------------------------+
@@ -261,18 +261,18 @@ Note: In order to hide this table in the UI and the text report file, please set
 +-----------------------+-----------------------------+
 ; Type                  ; Count                       ;
 +-----------------------+-----------------------------+
-; boundary_port         ; 10                          ;
-; cycloneiii_ff         ; 8                           ;
-;     CLR               ; 8                           ;
-; cycloneiii_lcell_comb ; 10                          ;
-;     normal            ; 10                          ;
+; boundary_port         ; 9                           ;
+; cycloneiii_ff         ; 5                           ;
+;     CLR               ; 5                           ;
+; cycloneiii_lcell_comb ; 12                          ;
+;     normal            ; 12                          ;
 ;         1 data inputs ; 1                           ;
-;         2 data inputs ; 3                           ;
-;         3 data inputs ; 2                           ;
-;         4 data inputs ; 4                           ;
+;         2 data inputs ; 1                           ;
+;         3 data inputs ; 5                           ;
+;         4 data inputs ; 5                           ;
 ;                       ;                             ;
 ; Max LUT depth         ; 2.00                        ;
-; Average LUT depth     ; 1.50                        ;
+; Average LUT depth     ; 1.76                        ;
 +-----------------------+-----------------------------+
 
 
@@ -291,7 +291,7 @@ Note: In order to hide this table in the UI and the text report file, please set
 Info: *******************************************************************
 Info: Running Quartus Prime Analysis & Synthesis
     Info: Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
-    Info: Processing started: Wed May 18 10:45:07 2022
+    Info: Processing started: Wed May 18 11:55:13 2022
 Info: Command: quartus_map --read_settings_files=on --write_settings_files=off project0 -c project0
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (20030): Parallel compilation is enabled and will use 4 of the 4 processors detected
@@ -301,20 +301,32 @@ Info (12021): Found 1 design units, including 1 entities, in source file fa8.v
     Info (12023): Found entity 1: fa8 File: C:/Users/user/Desktop/Programming/HDL/project0/fa8.v Line: 1
 Info (12021): Found 1 design units, including 1 entities, in source file counter.v
     Info (12023): Found entity 1: counter File: C:/Users/user/Desktop/Programming/HDL/project0/counter.v Line: 1
-Info (12127): Elaborating entity "counter" for the top level hierarchy
-Info (12128): Elaborating entity "fa8" for hierarchy "fa8:adder" File: C:/Users/user/Desktop/Programming/HDL/project0/counter.v Line: 13
-Info (12128): Elaborating entity "fa" for hierarchy "fa8:adder|fa:gen_fa8[0].fa0" File: C:/Users/user/Desktop/Programming/HDL/project0/fa8.v Line: 26
+Info (12021): Found 1 design units, including 1 entities, in source file pc.v
+    Info (12023): Found entity 1: pc File: C:/Users/user/Desktop/Programming/HDL/project0/pc.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file stage.v
+    Info (12023): Found entity 1: stage File: C:/Users/user/Desktop/Programming/HDL/project0/stage.v Line: 1
+Info (12127): Elaborating entity "stage" for the top level hierarchy
+Info (10264): Verilog HDL Case Statement information at stage.v(22): all case item expressions in this case statement are onehot File: C:/Users/user/Desktop/Programming/HDL/project0/stage.v Line: 22
+Info (13000): Registers with preset signals will power-up high File: C:/Users/user/Desktop/Programming/HDL/project0/stage.v Line: 22
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
 Info (286030): Timing-Driven Synthesis is running
+Info (144001): Generated suppressed messages file C:/Users/user/Desktop/Programming/HDL/project0/output_files/project0.map.smsg
 Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
     Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
 Info (21057): Implemented 20 device resources after synthesis - the final resource count might be different
-    Info (21058): Implemented 2 input pins
-    Info (21059): Implemented 8 output pins
-    Info (21061): Implemented 10 logic cells
+    Info (21058): Implemented 4 input pins
+    Info (21059): Implemented 5 output pins
+    Info (21061): Implemented 11 logic cells
 Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 1 warning
-    Info: Peak virtual memory: 4755 megabytes
-    Info: Processing ended: Wed May 18 10:45:16 2022
-    Info: Elapsed time: 00:00:09
+    Info: Peak virtual memory: 4757 megabytes
+    Info: Processing ended: Wed May 18 11:55:23 2022
+    Info: Elapsed time: 00:00:10
     Info: Total CPU time (on all processors): 00:00:23
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in C:/Users/user/Desktop/Programming/HDL/project0/output_files/project0.map.smsg.
 
 

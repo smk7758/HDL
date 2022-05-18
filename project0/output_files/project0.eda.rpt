@@ -1,5 +1,5 @@
 EDA Netlist Writer report for project0
-Wed May 18 10:21:10 2022
+Wed May 18 11:40:10 2022
 Quartus Prime Version 19.1.0 Build 670 09/22/2019 SJ Lite Edition
 
 
@@ -37,9 +37,9 @@ https://fpgasoftware.intel.com/eula.
 +-------------------------------------------------------------------+
 ; EDA Netlist Writer Summary                                        ;
 +---------------------------+---------------------------------------+
-; EDA Netlist Writer Status ; Successful - Wed May 18 10:21:10 2022 ;
+; EDA Netlist Writer Status ; Successful - Wed May 18 11:40:10 2022 ;
 ; Revision Name             ; project0                              ;
-; Top-level Entity Name     ; fa8                                   ;
+; Top-level Entity Name     ; pc                                    ;
 ; Family                    ; Cyclone IV E                          ;
 ; Simulation Files Creation ; Successful                            ;
 +---------------------------+---------------------------------------+
@@ -103,7 +103,7 @@ Info: Running Quartus Prime EDA Netlist Writer
     Info: Intel and sold by Intel or its authorized distributors.  Please
     Info: refer to the applicable agreement for further details, at
     Info: https://fpgasoftware.intel.com/eula.
-    Info: Processing started: Wed May 18 10:21:09 2022
+    Info: Processing started: Wed May 18 11:40:09 2022
 Info: Command: quartus_eda --write_settings_files=off --simulation=on --functional=off --flatten_buses=off --timescale=1ps --tool=modelsim_oem --format=verilog --output_directory=C:/Users/user/Desktop/Programming/HDL/project0/simulation/qsim/ project0 -c project0
 Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
 Info (204019): Generated file project0_8_1200mv_85c_slow.vo in folder "C:/Users/user/Desktop/Programming/HDL/project0/simulation/qsim//" for EDA simulation tool
@@ -116,7 +116,7 @@ Info (204019): Generated file project0_min_1200mv_0c_v_fast.sdo in folder "C:/Us
 Info (204019): Generated file project0_v.sdo in folder "C:/Users/user/Desktop/Programming/HDL/project0/simulation/qsim//" for EDA simulation tool
 Info: Quartus Prime EDA Netlist Writer was successful. 0 errors, 1 warning
     Info: Peak virtual memory: 4643 megabytes
-    Info: Processing ended: Wed May 18 10:21:10 2022
+    Info: Processing ended: Wed May 18 11:40:10 2022
     Info: Elapsed time: 00:00:01
     Info: Total CPU time (on all processors): 00:00:01
 
