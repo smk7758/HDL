@@ -64,7 +64,7 @@ module memory (
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 				.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
 				.ena(fatcha), // enable
-				.q(out_ira[i]) // 
+				.q(out_ira[i]) // out
 			);
 		end
 	endgenerate
@@ -89,7 +89,7 @@ module memory (
 			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
 			.ena(fatchb), // enable
-			.q(out_irb[i]) // 
+			.q(out_irb[i]) // out
 		);
 		end
 	endgenerate
