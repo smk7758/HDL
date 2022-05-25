@@ -21,6 +21,9 @@ after 2500 simTimestamp
 run -all
 quit -f
 
+
+
+
 </modelsim_script>
 <modelsim_script_timing>onerror {exit -code 1}
 vlib work
@@ -39,6 +42,9 @@ proc simTimestamp {} {
 after 2500 simTimestamp
 run -all
 quit -f
+
+
+
 
 </modelsim_script_timing>
 <hdl_lang>verilog</hdl_lang>
@@ -428,7 +434,7 @@ SIGNAL("waits")
 	PARENT = "";
 }
 
-SIGNAL("pc_out_")
+SIGNAL("ira")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = BUS;
@@ -438,84 +444,174 @@ SIGNAL("pc_out_")
 	PARENT = "";
 }
 
-SIGNAL("pc_out_[7]")
+SIGNAL("ira[7]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[6]")
+SIGNAL("ira[6]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[5]")
+SIGNAL("ira[5]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[4]")
+SIGNAL("ira[4]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[3]")
+SIGNAL("ira[3]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[2]")
+SIGNAL("ira[2]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[1]")
+SIGNAL("ira[1]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
 }
 
-SIGNAL("pc_out_[0]")
+SIGNAL("ira[0]")
 {
 	VALUE_TYPE = NINE_LEVEL_BIT;
 	SIGNAL_TYPE = SINGLE_BIT;
 	WIDTH = 1;
 	LSB_INDEX = -1;
 	DIRECTION = OUTPUT;
-	PARENT = "pc_out_";
+	PARENT = "ira";
+}
+
+SIGNAL("irb")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = BUS;
+	WIDTH = 8;
+	LSB_INDEX = 0;
+	DIRECTION = OUTPUT;
+	PARENT = "";
+}
+
+SIGNAL("irb[7]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[6]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[5]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[4]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[3]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[2]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[1]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
+}
+
+SIGNAL("irb[0]")
+{
+	VALUE_TYPE = NINE_LEVEL_BIT;
+	SIGNAL_TYPE = SINGLE_BIT;
+	WIDTH = 1;
+	LSB_INDEX = -1;
+	DIRECTION = OUTPUT;
+	PARENT = "irb";
 }
 
 TRANSITION_LIST("addr[7]")
@@ -597,9 +693,9 @@ TRANSITION_LIST("clk")
 		REPEAT = 1;
 		NODE
 		{
-			REPEAT = 50;
-			LEVEL 0 FOR 10.0;
-			LEVEL 1 FOR 10.0;
+			REPEAT = 100;
+			LEVEL 0 FOR 5.0;
+			LEVEL 1 FOR 5.0;
 		}
 	}
 }
@@ -791,7 +887,9 @@ TRANSITION_LIST("rst")
 		REPEAT = 1;
 		LEVEL 0 FOR 20.0;
 		LEVEL 1 FOR 10.0;
-		LEVEL 0 FOR 970.0;
+		LEVEL 0 FOR 360.0;
+		LEVEL 1 FOR 10.0;
+		LEVEL 0 FOR 600.0;
 	}
 }
 
@@ -815,7 +913,7 @@ TRANSITION_LIST("waits")
 	}
 }
 
-TRANSITION_LIST("pc_out_[7]")
+TRANSITION_LIST("ira[7]")
 {
 	NODE
 	{
@@ -824,7 +922,7 @@ TRANSITION_LIST("pc_out_[7]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[6]")
+TRANSITION_LIST("ira[6]")
 {
 	NODE
 	{
@@ -833,7 +931,7 @@ TRANSITION_LIST("pc_out_[6]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[5]")
+TRANSITION_LIST("ira[5]")
 {
 	NODE
 	{
@@ -842,7 +940,7 @@ TRANSITION_LIST("pc_out_[5]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[4]")
+TRANSITION_LIST("ira[4]")
 {
 	NODE
 	{
@@ -851,7 +949,7 @@ TRANSITION_LIST("pc_out_[4]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[3]")
+TRANSITION_LIST("ira[3]")
 {
 	NODE
 	{
@@ -860,7 +958,7 @@ TRANSITION_LIST("pc_out_[3]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[2]")
+TRANSITION_LIST("ira[2]")
 {
 	NODE
 	{
@@ -869,7 +967,7 @@ TRANSITION_LIST("pc_out_[2]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[1]")
+TRANSITION_LIST("ira[1]")
 {
 	NODE
 	{
@@ -878,7 +976,79 @@ TRANSITION_LIST("pc_out_[1]")
 	}
 }
 
-TRANSITION_LIST("pc_out_[0]")
+TRANSITION_LIST("ira[0]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[7]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[6]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[5]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[4]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[3]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[2]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[1]")
+{
+	NODE
+	{
+		REPEAT = 1;
+		LEVEL X FOR 1000.0;
+	}
+}
+
+TRANSITION_LIST("irb[0]")
 {
 	NODE
 	{
@@ -1231,7 +1401,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_";
+	CHANNEL = "ira";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 35;
@@ -1241,7 +1411,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[7]";
+	CHANNEL = "ira[7]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 36;
@@ -1251,7 +1421,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[6]";
+	CHANNEL = "ira[6]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 37;
@@ -1261,7 +1431,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[5]";
+	CHANNEL = "ira[5]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 38;
@@ -1271,7 +1441,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[4]";
+	CHANNEL = "ira[4]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 39;
@@ -1281,7 +1451,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[3]";
+	CHANNEL = "ira[3]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 40;
@@ -1291,7 +1461,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[2]";
+	CHANNEL = "ira[2]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 41;
@@ -1301,7 +1471,7 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[1]";
+	CHANNEL = "ira[1]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 42;
@@ -1311,12 +1481,102 @@ DISPLAY_LINE
 
 DISPLAY_LINE
 {
-	CHANNEL = "pc_out_[0]";
+	CHANNEL = "ira[0]";
 	EXPAND_STATUS = COLLAPSED;
 	RADIX = Unsigned;
 	TREE_INDEX = 43;
 	TREE_LEVEL = 1;
 	PARENT = 35;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 44;
+	TREE_LEVEL = 0;
+	CHILDREN = 45, 46, 47, 48, 49, 50, 51, 52;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[7]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 45;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[6]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 46;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[5]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 47;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[4]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 48;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[3]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 49;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[2]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 50;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[1]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 51;
+	TREE_LEVEL = 1;
+	PARENT = 44;
+}
+
+DISPLAY_LINE
+{
+	CHANNEL = "irb[0]";
+	EXPAND_STATUS = COLLAPSED;
+	RADIX = Unsigned;
+	TREE_INDEX = 52;
+	TREE_LEVEL = 1;
+	PARENT = 44;
 }
 
 TIME_BAR

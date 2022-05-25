@@ -3,7 +3,7 @@ module pc(
 		rst,
 		inc, // Hのとき、out = outo(クロックの立ち上がり直前の out の出力値)+1
 		load, // H, inc = Lのとき、out = in
-	input [7:0] in ,
+	input [7:0] in,
 	output [7:0] out
 );
 	// 入 力 信 号 の セ レ ク ト 用 の 配 線
