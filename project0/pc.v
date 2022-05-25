@@ -1,5 +1,8 @@
 module pc(
-	input clk , rst , inc , load ,
+	input clk,
+		rst,
+		inc, // Hのとき、out = outo(クロックの立ち上がり直前の out の出力値)+1
+		load, // H, inc = Lのとき、out = in
 	input [7:0] in ,
 	output [7:0] out
 );

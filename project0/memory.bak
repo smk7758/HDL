@@ -1,0 +1,10 @@
+module memory (
+input clk , rst , run ,
+output waits , fetcha , fetchb , execa , execb ,
+output [7:0] addr , data_in , data_out
+);
+wire [7:0] pc_out ;
+// ス テ ー ジ 制 御 部
+stage s(
+//
+//
