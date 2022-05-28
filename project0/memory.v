@@ -4,10 +4,11 @@ module memory (
 	output [7:0] addr, // 現在のアドレスバスの値を出力 
 		data_in, // 入力データバスの値を出力
 		data_out, // 出力データバスの値を出力
+		pc_out,
 		ira, irb
 );
 
-	wire [7:0] pc_out;
+//	wire [7:0] pc_out;
 //	wire pc_inc;
 
 	// ス テ ー ジ 制 御 部
@@ -37,7 +38,7 @@ module memory (
 	pc p(
 		clk,
 		rst,
-		fetcha + fetchb, // inc H
+		fetcha ^ fetchb, // inc H
 		1'b0, // load
 		8'b0, // in
 		pc_out // out
@@ -50,7 +51,7 @@ module memory (
 			// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 			dffe c(
-				.d(data_out) , // 入力信号（1-bit）
+				.d(data_out[i]) , // 入力信号（1-bit）
 				.clk(clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 				.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
@@ -60,19 +61,19 @@ module memory (
 		end
 	endgenerate
 	
-
 	// 命令レジスタ irb
 	generate
-		for (i = 0; i < 8; i = i+1) begin: genirb
+		genvar j;
+		for (j = 0; j < 8; j = j+1) begin: genirb
 		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 		dffe c(
-			.d(data_out) , // 入力信号（1-bit）
+			.d(data_out[j]) , // 入力信号（1-bit）
 			.clk(clk), // クロック信号（1-bit）
 			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
 			.ena(fatchb), // enable
-			.q(irb[i]) // out
+			.q(irb[j]) // out
 		);
 		end
 	endgenerate
