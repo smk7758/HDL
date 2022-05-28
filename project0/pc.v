@@ -18,11 +18,11 @@ module pc(
 			// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 			dffe c(
-			.d(d[i]) ,
-			.clk ( clk ),
-			.clrn (! rst ),
-			.prn (1'b1) ,
-			.ena (e),
+			.d(d[i]),
+			.clk( clk ),
+			.clrn(! rst ),
+			.prn(1'b1),
+			.ena(e),
 			.q(out[i]));
 		end
 	endgenerate

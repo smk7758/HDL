@@ -44,52 +44,35 @@ module memory (
 	);
 	
 	// 命令レジスタ ira: インストラクションレジスタ
-	function [7:0] select_ira;
-		input _fetcha;
-		input [7:0] _data_out;
-		if (_fetcha == 1'b1) select_ira = _data_out;
-//		else select_ira = 
-	endfunction
-	assign ira = select_ira(fetcha, data_out);
-	
-	wire [7:0] out_ira;
 	generate
 		genvar i;
 		for (i = 0; i < 8; i = i+1) begin: genira
 			// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 			dffe c(
-				.d(ira[i]) , // 入力信号（1-bit）
+				.d(data_out) , // 入力信号（1-bit）
 				.clk(clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 				.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
 				.ena(fatcha), // enable
-				.q(out_ira[i]) // out
+				.q(ira[i]) // out
 			);
 		end
 	endgenerate
 	
 
 	// 命令レジスタ irb
-	function [7:0] select_irb;
-		input _fetchb;
-		input _data_out;
-		if (_fetchb == 1'b1) select_irb = _data_out;
-	endfunction
-	assign irb = select_irb(fetchb, data_out);
-	
-	wire [7:0] out_irb;
 	generate
 		for (i = 0; i < 8; i = i+1) begin: genirb
 		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 		dffe c(
-			.d(irb[i]) , // 入力信号（1-bit）
+			.d(data_out) , // 入力信号（1-bit）
 			.clk(clk), // クロック信号（1-bit）
 			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
 			.ena(fatchb), // enable
-			.q(out_irb[i]) // out
+			.q(irb[i]) // out
 		);
 		end
 	endgenerate
@@ -97,31 +80,31 @@ module memory (
 	// ア ド レ ス バ ス の セ レ ク ト
 	function [7:0] select_addr;
 		input _fetcha, _fetchb, _execa;
-		input [7:0] _pc_out, _out_ira;
+		input [7:0] _pc_out, _ira;
 		
 		begin
-			if (/* 条 件 */ _fetcha + _fetchb == 1'b1) select_addr = _pc_out;
-			else if (_execa == 1'b1) select_addr = _out_ira;
+			if (_fetcha ^ _fetchb == 1'b1) select_addr = _pc_out;
+			else if (_execa == 1'b1) select_addr = _ira;
 			else select_addr = 8'b0;
 		end
 	endfunction
 
 	// ア ド レ ス バ ス を 条 件 に 応 じ て 接 続
-	assign addr = select_addr( fetcha , fetchb , execa, pc_out, out_ira);
+	assign addr = select_addr( fetcha , fetchb , execa, pc_out, ira);
 	
 		// ア ド レ ス バ ス の セ レ ク ト
 	function [7:0] select_data_in;
 		input _execa;
-		input [7:0] _out_irb;
+		input [7:0] _irb;
 		
 		begin
-			if (_execa == 1'b1) select_data_in = _out_irb;
+			if (_execa == 1'b1) select_data_in = _irb;
 			else select_data_in = 8'b0;
 		end
 	endfunction
 
 	// ア ド レ ス バ ス を 条 件 に 応 じ て 接 続
-	assign data_in = select_data_in( execa, out_irb );
+	assign data_in = select_data_in( execa, irb );
 	
 	
 	// RAM たち下がり時
