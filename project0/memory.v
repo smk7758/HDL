@@ -44,13 +44,13 @@ module memory (
 		pc_out // out
 	);
 	
-	// 命令レジスタ ira: インストラクションレジスタ
 	generate
 		genvar i;
 		for (i = 0; i < 8; i = i+1) begin: genira
+			// 命令レジスタ ira: インストラクションレジスタ
 			// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
-			dffe c(
+			dffe ira(
 				.d(data_out[i]) , // 入力信号（1-bit）
 				.clk(!clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
@@ -58,23 +58,16 @@ module memory (
 				.ena(fetcha), // enable
 				.q(ira[i]) // out
 			);
-		end
-	endgenerate
-	
-	// 命令レジスタ irb
-	generate
-		genvar j;
-		for (j = 0; j < 8; j = j+1) begin: genirb
-		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
-		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
-		dffe c(
-			.d(data_out[j]) , // 入力信号（1-bit）
-			.clk(!clk), // クロック信号（1-bit）
-			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
-			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-			.ena(fetchb), // enable DFFEのenable（1-bit）
-			.q(irb[j]) // out
-		);
+			
+			// 命令レジスタ irb
+			dffe irb(
+				.d(data_out[i]) , // 入力信号（1-bit）
+				.clk(!clk), // クロック信号（1-bit）
+				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
+				.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
+				.ena(fetchb), // enable DFFEのenable（1-bit）
+				.q(irb[i]) // out
+			);
 		end
 	endgenerate
 
