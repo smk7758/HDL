@@ -72,7 +72,7 @@ module memory (
 			.clk(!clk), // クロック信号（1-bit）
 			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-			.ena(fetchb), // enable
+			.ena(fetchb), // enable DFFEのenable（1-bit）
 			.q(irb[j]) // out
 		);
 		end
