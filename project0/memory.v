@@ -52,10 +52,10 @@ module memory (
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 			dffe c(
 				.d(data_out[i]) , // 入力信号（1-bit）
-				.clk(clk), // クロック信号（1-bit）
+				.clk(!clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 				.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-				.ena(fatcha), // enable
+				.ena(fetcha), // enable
 				.q(ira[i]) // out
 			);
 		end
@@ -69,10 +69,10 @@ module memory (
 		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
 		dffe c(
 			.d(data_out[j]) , // 入力信号（1-bit）
-			.clk(clk), // クロック信号（1-bit）
+			.clk(!clk), // クロック信号（1-bit）
 			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
 			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-			.ena(fatchb), // enable
+			.ena(fetchb), // enable
 			.q(irb[j]) // out
 		);
 		end
