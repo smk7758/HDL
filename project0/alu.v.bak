@@ -1,0 +1,3 @@
+module alu (
+input clk , rst , ena ,
+input [1:0] ctrl ,
