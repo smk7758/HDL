@@ -12,7 +12,7 @@ module alu (
 	.d( cffd ),
 	. clk ( clk ) ,
 	. clrn (! rst ) ,
-	. prn (1 ’ b1),
+	. prn (1'b1),
 	. ena ( ena ) ,
 	.q( cflag ));
 
@@ -20,7 +20,7 @@ module alu (
 	.d( zffd ),
 	.clk ( clk ) ,
 	.clrn (! rst ) ,
-	.prn (1 ’ b1),
+	.prn (1'b1),
 	.ena ( ena ) ,
 	.q( zflag ));
 
@@ -32,17 +32,18 @@ module alu (
 		begin
 			case ( _ctrl )
 			// イ ン ク リ メ ン ト
-			2 ’ b00 : calculation = {1 ’b0 , _ain } + 9 ’ b000000001 ;
+			2'b00 : calculation = {1'b0 , _ain } + 9'b000000001 ;
 			// デ ク リ メ ン ト
-			2 ’ b01 : calculation = {1 ’b0 , _ain } - 9 ’ b000000001 ;
+			2'b01 : calculation = {1'b0 , _ain } - 9'b000000001 ;
 			// 加 算
-			2 ’ b10 : calculation = {1 ’b0 , _ain } + {1 ’b0 , _bin };
+			2'b10 : calculation = {1'b0 , _ain } + {1'b0 , _bin };
 			// 減 算
-			2 ’ b11 : calculation = {1 ’b0 , _ain } - {1 ’b0 , _bin };
+			2'b11 : calculation = {1'b0 , _ain } - {1'b0 , _bin };
 			endcase
 		end
 	endfunction
-	assign {cffd , sout } = calculation (ctrl , ain , bin );
-	assign zffd = ( cffd == 1 ’b0 && sout == 8 ’b0) ? 1 ’b1 : 1 ’b0;
+	
+	assign {cffd , sout } = calculation (ctrl , ain , bin);
+	assign zffd = ( cffd == 1'b0 && sout == 8'b0) ? 1'b1 : 1'b0;
 
 endmodule
