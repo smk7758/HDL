@@ -1,6 +1,6 @@
 module register (
 	input clk , rst, cload,
-	input [2:0] asel, bsel, csel,
+	input [3:0] asel, bsel, csel,
 	input [7:0] cin,
 	output [7:0] aout, bout
 );
@@ -11,7 +11,7 @@ module register (
 	
 	// r e g i s t e r の 出 力 制 御 用 関 数
 	function [7:0] select_out;
-		input [2:0] _sel;
+		input [3:0] _sel;
 		begin
 			if ( _sel == 3'b000 ) select_out = rout0 ;
 			else if ( _sel == 3'b001 ) select_out = rout1 ;
@@ -28,7 +28,7 @@ module register (
 	// D F F E の 制 御 用 関 数
 	function [3:0] select_ena;
 		input _load;
-		input [2:0] _sel;
+		input [3:0] _sel;
 		begin
 			if ( _load == 1'b1) begin
 				case ( _sel )
