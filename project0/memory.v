@@ -50,7 +50,7 @@ module memory (
 			// 命令レジスタ ira: インストラクションレジスタ
 			// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
 			// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
-			dffe ira(
+			dffe iras(
 				.d(data_out[i]) , // 入力信号（1-bit）
 				.clk(!clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
@@ -60,7 +60,7 @@ module memory (
 			);
 			
 			// 命令レジスタ irb
-			dffe irb(
+			dffe irbs(
 				.d(data_out[i]) , // 入力信号（1-bit）
 				.clk(!clk), // クロック信号（1-bit）
 				.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
