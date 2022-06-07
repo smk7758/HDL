@@ -15,15 +15,16 @@ stage s(
 //	output wire waits , fetcha , fetchb , execa , execb
 //);
 
-wire [7:0] pc_in, pc_out;
+wire pc_in_ena; // pc_inを有効にするかどうか
+wire [7:0] pc_in, pc_out; // TODO
 
 // pc
 /* こ こ で ， p c に 接 続 さ れ る 信 号 線 を 宣 言 */
 	pc p(
 		clk,
 		rst,
-		fetcha ^ fetchb, // inc H
-		1'b0, // load
+		fetcha ^ fetchb, // inc H // TODO
+		pc_in_ena, // load
 		pc_in, // in
 		pc_out // out
 	);
@@ -89,13 +90,14 @@ assign {opcode_first, opcode_second, opcode_third} = opcode;
 
 function [1:0] assign_ram;
 	input _fetcha, _fetchb, _execa, _execb;
-	input [1:0] opcode_second;
-	input [2:0] opcode_first, opcode_third;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
 
 	begin
 		if (/* on fetch */ _fetcha ^ _fetchb == 1'b1) assign_ram = {1'b1, 1'b0}; // read
-		else if (/* on exec */ _execa ^ _execb == 1'b1 && opcode_first == 3'b000) begin
-			case (opcode_second)
+		else if (/* on exec */ _execa ^ _execb == 1'b1 && _opcode_first == 3'b000) begin
+			case (_opcode_second)
 				2'b01: assign_ram = {1'b1, 1'b0}; // LD: load, read
 				2'b10: assign_ram = {1'b0, 1'b1}; // ST: store, write
 				default: assign_ram = 2'b0;
@@ -109,26 +111,45 @@ assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, op
 
 wire alu_ena;
 wire [1:0] alu_ctrl;
+
 wire [7:0] alu_ain, alu_bin;
+assign alu_ain = aout;
+assign alu_bin = bout;
+
 wire cflag, zflag;
-wire [7:0] sout;
+
+wire [7:0] alu_out;
+assign cin = alu_out;
 
 // alu
 /* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
 alu a(
 	clk, rst,
 	alu_ena, alu_ctrl,
+	alu_ain, alu_bin,
 	cflag, zflag,
-	sout
+	alu_out
 );
 //module alu (
-//	input clk , rst , ena ,
+//	input clk , rst ,
+//  		ena ,
 //	input [1:0] ctrl ,
 //	input [7:0] ain , bin ,
 //	output cflag , zflag ,
 //	output [7:0] sout // 出力
 //);
 
+function [1:0] assign_alu_ctrl;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
 
+	begin
+		if (/* on fetch */ _fetcha ^ _fetchb == 1'b1) assign_alu_ctrl = {1'b1, 1'b0}; // read
+		else assign_alu_ctrl = 2'b0;
+	end
+endfunction
+
+assign alu_ctrl = assign_alu_ctrl(opcode_first, opcode_second, opcode_third);
 
 endmodule
