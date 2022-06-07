@@ -15,20 +15,18 @@ stage s(
 //	output wire waits , fetcha , fetchb , execa , execb
 //);
 
-wire pc_in_ena; // pc_inを有効にするかどうか
-wire [7:0] pc_in, pc_out; // TODO
-
-
 // pc
 /* こ こ で ， p c に 接 続 さ れ る 信 号 線 を 宣 言 */
-	pc p(
-		clk,
-		rst,
-		fetcha ^ fetchb, // inc H // TODO
-		pc_in_ena, // load
-		pc_in, // in
-		pc_out // out
-	);
+wire pc_in_ena; // pc_inを有効にするかどうか
+wire [7:0] pc_in, pc_out; // TODO
+pc p(
+	clk,
+	rst,
+	fetcha ^ fetchb, // inc H // TODO
+	pc_in_ena, // load
+	pc_in, // in
+	pc_out // out
+);
 //module pc(
 //	input clk,
 //		rst,
@@ -38,13 +36,31 @@ wire [7:0] pc_in, pc_out; // TODO
 //	output [7:0] out
 //);
 
-wire cload;
-wire [3:0] asel, bsel, csel;
-wire [7:0] cin, aout, bout;
+function [8:0] assign_pc_in;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
+	input _cflag, _zflag;
 
+	begin
+		if (/* JC～JMPまで */ _opcode_first == 3'001) begin
+			if (/* JMP */ _opcode_second == 2'b11) assign_pc_in = {1'b1, }
+			else begin
+				
+			end
+			// assign_alu_ctrl = {1'b1, _opcode_second};
+		end
+		else assign_alu_ctrl = 3'b0;
+	end
+endfunction
+
+assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_third, cflag, zflag);
 
 // register
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
+wire cload;
+wire [3:0] asel, bsel, csel;
+wire [7:0] cin, aout, bout;
 register r(
 	clk, rst,
 	cload,
@@ -122,6 +138,20 @@ endfunction
 
 assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, opcode_second, opcode_third );
 
+function [7:0] assign_data_in;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [7:0] _aout
+
+	begin
+		if (/* ST: storeのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b10) assign_data_in = _aout;
+		else assign_data_in = 8'b0;
+	end
+endfunction
+assign data_in = assign_data_in(opcode_first, opcode_second, aout);
+
+// alu
+/* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire alu_ena;
 wire [1:0] alu_ctrl;
 
@@ -134,9 +164,6 @@ wire cflag, zflag; // output
 wire [7:0] alu_out;
 assign cin = alu_out;
 
-
-// alu
-/* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
 alu a(
 	clk, rst,
 	alu_ena, alu_ctrl,
