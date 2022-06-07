@@ -18,6 +18,7 @@ stage s(
 wire pc_in_ena; // pc_inを有効にするかどうか
 wire [7:0] pc_in, pc_out; // TODO
 
+
 // pc
 /* こ こ で ， p c に 接 続 さ れ る 信 号 線 を 宣 言 */
 	pc p(
@@ -41,6 +42,7 @@ wire cload;
 wire [3:0] asel, bsel, csel;
 wire [7:0] cin, aout, bout;
 
+
 // register
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
 register r(
@@ -58,7 +60,21 @@ register r(
 //	output [7:0] aout, bout
 //);
 
+function [7:0] assign_cin;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [7:0] _data_out, _alu_out
+
+	begin
+		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01) assign_cin = _data_out;
+		else if (/* ALUの計算のとき */_opcode_first == 3'b100) assign_cin = _alu_out;
+		else assign_cin = 8'b0;
+	end
+endfunction
+assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
+
 wire rden, wren;
+
 
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -66,7 +82,7 @@ ram m(
 	addr, clk,
 	data_in,
 	rden, wren,
-	data_out
+	data_out // out
 );
 //	// RAM たち下がり時
 //	// module ram ( address , clock , data , rden , wren , q);
@@ -78,10 +94,6 @@ ram m(
 //		execa, // write enable
 //		data_out // q: data_out
 //	);
-
-// 状態が execa もしくは execb のとき，opcode に応じて読み込みか書き込みか決まる（例えば，LD か ST か）
-
-//wire on_fetch = fetcha ^ fetchb;
 
 // opcodeを分解する
 wire [1:0] opcode_second;
@@ -97,6 +109,7 @@ function [1:0] assign_ram;
 	begin
 		if (/* on fetch */ _fetcha ^ _fetchb == 1'b1) assign_ram = {1'b1, 1'b0}; // read
 		else if (/* on exec */ _execa ^ _execb == 1'b1 && _opcode_first == 3'b000) begin
+			// 状態が execa もしくは execb のとき，opcode に応じて読み込みか書き込みか決まる（例えば，LD か ST か）
 			case (_opcode_second)
 				2'b01: assign_ram = {1'b1, 1'b0}; // LD: load, read
 				2'b10: assign_ram = {1'b0, 1'b1}; // ST: store, write
@@ -116,10 +129,11 @@ wire [7:0] alu_ain, alu_bin;
 assign alu_ain = aout;
 assign alu_bin = bout;
 
-wire cflag, zflag;
+wire cflag, zflag; // output
 
 wire [7:0] alu_out;
 assign cin = alu_out;
+
 
 // alu
 /* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -127,8 +141,8 @@ alu a(
 	clk, rst,
 	alu_ena, alu_ctrl,
 	alu_ain, alu_bin,
-	cflag, zflag,
-	alu_out
+	cflag, zflag, // out
+	alu_out // sout
 );
 //module alu (
 //	input clk , rst ,
@@ -139,17 +153,16 @@ alu a(
 //	output [7:0] sout // 出力
 //);
 
-function [1:0] assign_alu_ctrl;
+function [2:0] assign_alu_ctrl;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
-	input [2:0] _opcode_third;
 
 	begin
-		if (/* on fetch */ _fetcha ^ _fetchb == 1'b1) assign_alu_ctrl = {1'b1, 1'b0}; // read
-		else assign_alu_ctrl = 2'b0;
+		if (_opcode_first == 3'100) assign_alu_ctrl = {1'b1, _opcode_second};
+		else assign_alu_ctrl = 3'b0;
 	end
 endfunction
 
-assign alu_ctrl = assign_alu_ctrl(opcode_first, opcode_second, opcode_third);
+assign {alu_ena, alu_ctrl} = assign_alu_ctrl(opcode_first, opcode_second);
 
 endmodule
