@@ -62,7 +62,7 @@ wire rden, wren;
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
 ram m(
-	addr, clk, 
+	addr, clk,
 	data_in,
 	rden, wren,
 	data_out
@@ -78,11 +78,34 @@ ram m(
 //		data_out // q: data_out
 //	);
 
-//rden = fetch_a ^ fetch_b;
-//wren
 // 状態が execa もしくは execb のとき，opcode に応じて読み込みか書き込みか決まる（例えば，LD か ST か）
 
-//assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode );
+//wire on_fetch = fetcha ^ fetchb;
+
+// opcodeを分解する
+wire [1:0] opcode_second;
+wire [2:0] opcode_first, opcode_third;
+assign {opcode_first, opcode_second, opcode_third} = opcode;
+
+function [1:0] assign_ram;
+	input _fetcha, _fetchb, _execa, _execb;
+	input [1:0] opcode_second;
+	input [2:0] opcode_first, opcode_third;
+
+	begin
+		if (/* on fetch */ _fetcha ^ _fetchb == 1'b1) assign_ram = {1'b1, 1'b0}; // read
+		else if (/* on exec */ _execa ^ _execb == 1'b1 && opcode_first == 3'b000) begin
+			case (opcode_second)
+				2'b01: assign_ram = {1'b1, 1'b0}; // LD: load, read
+				2'b10: assign_ram = {1'b0, 1'b1}; // ST: store, write
+				default: assign_ram = 2'b0;
+			endcase
+		end
+		else assign_ram = 2'b0;
+	end
+endfunction
+
+assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, opcode_second, opcode_third );
 
 wire alu_ena;
 wire [1:0] alu_ctrl;
@@ -105,5 +128,7 @@ alu a(
 //	output cflag , zflag ,
 //	output [7:0] sout // 出力
 //);
+
+
 
 endmodule
