@@ -28,10 +28,10 @@ module cpu (
 assign opcode_ = opcode;
 assign operand_ = operand;
 assign alu_out_ = alu_out;
-// assign {asel_, bsel_} = {asel, bsel};
+assign {asel_, bsel_} = {asel, bsel};
 assign {alu_ain_, alu_bin_} = {alu_ain, alu_bin};
 //assign {operand_first_, operand_second_} = {operand_first, operand_second};
-assign {aout_, bout_} = {aout, bout};
+//assign {aout_, bout_} = {aout, bout};
 // assign cin_ = cin;
 
 // stage
@@ -130,54 +130,86 @@ wire [2:0] operand_first, operand_second;
 wire [1:0] operand_third; // not using
 assign {operand_first, operand_second, operand_third} = operand;
 
-function [8:0] assign_asel_bsel_csel;
-	input [2:0] _opcode_first;
-	input [1:0] _opcode_second;
-	input [2:0] _opcode_third;
-	input [2:0] _operand_first, _operand_second;
-	input [1:0] _operand_third;
-	input _execa, _execb;
+// TODO: 再構築 消す: asel, bsel, csel
+// function [8:0] assign_asel_bsel_csel;
+// 	input [2:0] _opcode_first;
+// 	input [1:0] _opcode_second;
+// 	input [2:0] _opcode_third;
+// 	input [2:0] _operand_first, _operand_second;
+// 	input [1:0] _operand_third;
+// 	input _execa, _execb;
 
-	begin
-		if (_execa ^ _execb == 1'b1) begin
-			if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
-				assign_asel_bsel_csel = {3'b0, 3'b0, _opcode_third};
-				// assign_asel_bsel_csel = {3'b0, 3'b1, _opcode_third}; // TODO: 検証
-			if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
-				assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
-				// assign_asel_bsel_csel = {_opcode_third, 3'b1, 3'b0}; // TODO: 検証
-			else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
-				if (/* INC, DEC */ opcode_second == 2'b00 || opcode_second == 2'b01)
-					assign_asel_bsel_csel = {_operand_first, 3'b0, _opcode_third};
-				else /* ADD, SUB */
-					assign_asel_bsel_csel = {_operand_first, _operand_second, _opcode_third};
-					// assign_asel_bsel_csel = {3'b000, 3'b001, _opcode_third}; // TODO:検証
-			end
-			else assign_asel_bsel_csel = 9'b0;
-		end
-		else assign_asel_bsel_csel = 9'b0;
-	end
-endfunction
+// 	begin
+// 		if (_execa ^ _execb == 1'b1) begin
+// 			if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
+// 				assign_asel_bsel_csel = {3'b0, 3'b0, _opcode_third};
+// 				// assign_asel_bsel_csel = {3'b0, 3'b1, _opcode_third}; // TODO: 検証
+// 			if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
+// 				assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
+// 				// assign_asel_bsel_csel = {_opcode_third, 3'b1, 3'b0}; // TODO: 検証
+// 			else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
+// 				if (/* INC, DEC */ opcode_second == 2'b00 || opcode_second == 2'b01)
+// 					assign_asel_bsel_csel = {_operand_first, 3'b0, _opcode_third};
+// 				else /* ADD, SUB */
+// 					assign_asel_bsel_csel = {_operand_first, _operand_second, _opcode_third};
+// 					// assign_asel_bsel_csel = {3'b000, 3'b001, _opcode_third}; // TODO:検証
+// 			end
+// 			else assign_asel_bsel_csel = 9'b0;
+// 		end
+// 		else assign_asel_bsel_csel = 9'b0;
+// 	end
+// endfunction
 
 // assign {asel, bsel, csel} = assign_asel_bsel_csel(opcode_first, opcode_second, opcode_third,
 // 	operand_first, operand_second, operand_third,
 // 	execa, execb);
-assign {asel, bsel, csel} = {6'b000_001, opcode_third};
+// assign {asel, bsel, csel} = {6'b000_001, opcode_third};
 
-function [8:0] assign_cload_cin;
+function [5:0] assign_asel_bsel; // 3+3
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
+	input [2:0] _operand_first, _operand_second;
+	// input [1:0] _operand_third;
+	input _execa, _execb; // TODO: 必要？
+
+	begin
+		if (_execa ^ _execb == 1'b1) begin
+			// if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
+			// 	assign_asel_bsel = {3'b0, 3'b0};
+			if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
+				assign_asel_bsel = {_opcode_third, 3'b0};
+			else if (/* ALUの計算のとき */ _opcode_first[2] == 1'b1) begin
+				if (/* INC, DEC */ _opcode_second[1] == 1'b0)
+				// if (/* INC, DEC */ _opcode_second == 2'b00 || _opcode_second == 2'b01)
+					assign_asel_bsel = {_operand_first, 3'b0};
+				else /* ADD, SUB */
+					assign_asel_bsel = {_operand_first, _operand_second};
+			end
+			else assign_asel_bsel = 6'b0;
+		end
+		else assign_asel_bsel = 6'b0;
+	end
+endfunction
+
+assign {asel, bsel} = assign_asel_bsel(opcode_first, opcode_second, opcode_third, operand_first, operand_second, execa, execb);
+
+function [11:0] assign_cload_cin_csel; // 1+8+3 = 12
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
 	input [7:0] _data_out, _alu_out;
+	// input _execa, _execb; // TODO: 必要？
 
 	begin
 		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
-			assign_cload_cin = {1'b1, _data_out};
+			assign_cload_cin_csel = {1'b1, _data_out, _opcode_third};
 		else if (/* ALUの計算のとき */ _opcode_first == 3'b100)
-			assign_cload_cin = {1'b1, _alu_out};
-		else assign_cload_cin = 9'b0;
+			assign_cload_cin_csel = {1'b1, _alu_out, _opcode_third};
+		else assign_cload_cin_csel = 12'b0;
 	end
 endfunction
-assign {cload, cin} = assign_cload_cin(opcode_first, opcode_second, data_out, alu_out);
+assign {cload, cin, csel} = assign_cload_cin_csel(opcode_first, opcode_second, opcode_third, data_out, alu_out);
 
 
 
