@@ -2,6 +2,12 @@ module cpu (
 	input clk, rst, run, halt,
 	output [7:0] addr, data_in, data_out,
 	output waits, fetcha, fetchb, execa, execb
+	,
+	output [7:0] pc_in, pc_out // TODO: 検証
+	,
+	output [7:0] opcode, operand // TODO: 検証
+	,
+	output rden, wren // TODO: 検証
 );
 
 // stage
@@ -18,11 +24,11 @@ stage s(
 // pc
 /* こ こ で ， p c に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire pc_in_ena; // pc_inを有効にするかどうか
-wire [7:0] pc_in, pc_out; // TODO
+//wire [7:0] pc_in, pc_out; // TODO: 検証
 pc p(
 	clk,
 	rst,
-	fetcha ^ fetchb, // inc H // TODO
+	fetcha ^ fetchb, // inc H
 	pc_in_ena, // load
 	pc_in, // in
 	pc_out // out
@@ -38,7 +44,7 @@ pc p(
 
 function [8:0] assign_pc_in;
 	// input [7:0] pc_in;
-	input _halt;
+	input _rst, _halt;
 	input [7:0] _opcode;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
@@ -47,24 +53,27 @@ function [8:0] assign_pc_in;
 	input _cflag, _zflag;
 
 	begin
-		if (/* HLT */_opcode == 8'b0 && _halt == 1'b1) assign_pc_in = {1'b0, 8'b0}; // 命令を読み込んでから停止
-		else if (/* JC～JMPまで */ _opcode_first == 3'b001) begin
-			if (/* JMP */ _opcode_second == 2'b11 && _opcode_third == 3'b111) assign_pc_in = {1'b1, _operand};
+		// if (_rst == 1'b1) assign_pc_in = {}
+		// if (/* HLT */_opcode == 8'b0 && _halt == 1'b1)
+		// 	assign_pc_in = {1'b0, 8'b0}; // 命令を読み込んでから停止
+		if (/* JC～JMPまで */ _opcode_first == 3'b001) begin
+			if (/* JMP */ _opcode_second == 2'b11 && _opcode_third == 3'b111)
+				assign_pc_in = {1'b1, _operand};
 			else begin
 				// JMPを除く pc_in = m (条件付き)
 				if (/* JC */ _opcode_third == 3'b0_00 && _cflag == 1'b1) assign_pc_in = {1'b1, operand};
 				if (/* JNC */ _opcode_third == 3'b0_01 && _cflag != 1'b1) assign_pc_in = {1'b1, operand};
 				if (/* JZ */ _opcode_third == 3'b0_10 && _zflag == 1'b1) assign_pc_in = {1'b1, operand};
 				if (/* JNC */ _opcode_third == 3'b0_11 && _zflag != 1'b1) assign_pc_in = {1'b1, operand};
-				else assign_pc_in = {1'b1, 8'b0};
+				else assign_pc_in = {1'b0, 8'b0};
 			end
 			// assign_pc_in = {1'b1, _opcode_second};
 			end
-		else assign_pc_in = {1'b1, 8'b0};
+		else assign_pc_in = {1'b0, 8'b0};
 	end
 endfunction
 
-assign {pc_in_ena, pc_in} = assign_pc_in(halt, opcode, opcode_first, opcode_second, opcode_third, operand, cflag, zflag);
+assign {pc_in_ena, pc_in} = assign_pc_in(rst, halt, opcode, opcode_first, opcode_second, opcode_third, operand, cflag, zflag);
 
 
 // register
@@ -129,8 +138,7 @@ assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
 
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
-wire rden, wren;
-
+// wire rden, wren; // TODO: 検証
 ram m(
 	addr, clk,
 	data_in,
@@ -157,7 +165,7 @@ function [7:0] select_addr;
 	input [2:0] _opcode;
 
 	begin
-		if (_rst == 1'b1) select_addr = 8'b1;
+		if (_rst == 1'b1) select_addr = 8'b0;
 		else if (_fetcha ^ _fetchb == 1'b1) select_addr = _pc_out;
 		else if ((_execa ^ _execb == 1'b1) && (opcode[7] == 0)) select_addr = _operand;
 		else select_addr = 8'b0;
@@ -209,11 +217,12 @@ endfunction
 
 assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, opcode_second, opcode_third );
 
-wire [7:0] opcode, operand;
+
+//  ～～ opcode, oprand ～～
+// wire [7:0] opcode, operand; // TODO: 検証
 // fetchaでopcode, fetchbでoperandを入れる
 assign opcode = ira; // TODO: 正しい？
 assign operand = irb;
-
 
 wire [7:0] ira, irb;
 generate
