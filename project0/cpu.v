@@ -118,34 +118,42 @@ function [8:0] assign_asel_bsel_csel;
 	input [2:0] _opcode_third;
 	input [2:0] _operand_first, operand_second;
 	input [1:0] _operand_third;
+	input _execa, _execb;
 
 	begin
-		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
-			assign_asel_bsel_csel = {3'b0, 3'b0, opcode_third};
-		if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
-			assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
-		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
-			if (/* INC, DEC */opcode_second[1] == 1'b0) assign_asel_bsel_csel = {operand_first, 3'b0, opcode_first};
-			else /* ADD, SUB */assign_asel_bsel_csel = {operand_first, operand_second, opcode_first};
+		if (_execa ^ _execb == 1'b1) begin
+			if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
+				assign_asel_bsel_csel = {3'b0, 3'b0, opcode_third};
+			if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
+				assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
+			else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
+				if (/* INC, DEC */opcode_second[1] == 1'b0) assign_asel_bsel_csel = {operand_first, 3'b0, opcode_first};
+				else /* ADD, SUB */assign_asel_bsel_csel = {operand_first, operand_second, opcode_first};
+			end
+			else assign_asel_bsel_csel = 9'b0;
 		end
 		else assign_asel_bsel_csel = 9'b0;
 	end
 endfunction
 
-assign {asel, bsel, csel} = assign_asel_bsel_csel(opcode_first, opcode_second, opcode_third, operand_first, operand_second, operand_third);
+assign {asel, bsel, csel} = assign_asel_bsel_csel(opcode_first, opcode_second, opcode_third,
+	operand_first, operand_second, operand_third,
+	execa, execb);
 
-function [7:0] assign_cin;
+function [8:0] assign_cload_cin;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [7:0] _data_out, _alu_out;
 
 	begin
-		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01) assign_cin = _data_out;
-		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) assign_cin = _alu_out;
-		else assign_cin = 8'b0;
+		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01) assign_cload_cin = {1'b1, _data_out};
+		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) assign_cload_cin = {1'b1, _alu_out};
+		else assign_cload_cin = 9'b0;
 	end
 endfunction
-assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
+assign {cload, cin} = assign_cload_cin(opcode_first, opcode_second, data_out, alu_out);
+
+
 
 
 // ram
@@ -195,7 +203,9 @@ function [7:0] assign_data_in;
 	input [7:0] _aout; // aout
 
 	begin
-		if (/* ST: storeのとき */ (_execa ^ _execb == 1'b1) && (_opcode_first == 3'b0 && _opcode_second == 2'b10)) assign_data_in = _aout;
+		if (/* ST: storeのとき */ (_execa ^ _execb == 1'b1) 
+			&& (_opcode_first == 3'b0 && _opcode_second == 2'b10))
+			assign_data_in = _aout;
 		else assign_data_in = 8'b0;
 	end
 endfunction
