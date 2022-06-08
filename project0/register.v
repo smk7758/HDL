@@ -26,7 +26,7 @@ module register (
 	endfunction
 
 	// D F F E の 制 御 用 関 数
-	function [2:0] select_ena;
+	function [7:0] select_ena;
 		input _load;
 		input [2:0] _sel;
 		begin
@@ -128,5 +128,5 @@ module register (
 	// 配 線
 	assign aout = select_out ( asel ); // a o u t の 接 続
 	assign bout = select_out ( bsel ); // b o u t の 接 続
-	assign {rena3 , rena2 , rena1 , rena0 } = select_ena(cload , csel);
+	assign {rena7, rena6, rena5, rena4, rena3 , rena2 , rena1 , rena0 } = select_ena(cload , csel);
 endmodule
