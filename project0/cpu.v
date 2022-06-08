@@ -96,7 +96,8 @@ wire cload; // 立ち上がり時にcsel で選択された レジスタに cin 
 wire [2:0] asel, bsel, csel; // a (番地)
 // wire [7:0] aout, bout, cin; // r[a] (値)  // TODO: 検証
 register r(
-	!clk, rst,
+	clk, // TODO: 立ち上がり、立ち下がり
+	rst,
 	cload,
 	asel, bsel, csel,
 	cin,
