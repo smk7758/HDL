@@ -43,12 +43,12 @@ function [8:0] assign_pc_in;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [2:0] _opcode_third;
-	input [7:0] _operand
+	input [7:0] _operand;
 	input _cflag, _zflag;
 
 	begin
-		if (/* HLT */_opcode == 8'b0 && _halt == 1'b1) assign_pc_in = {0'b0, 8'b0}; // 命令を読み込んでから停止
-		else if (/* JC～JMPまで */ _opcode_first == 3'001) begin
+		if (/* HLT */_opcode == 8'b0 && _halt == 1'b1) assign_pc_in = {1'b0, 8'b0}; // 命令を読み込んでから停止
+		else if (/* JC～JMPまで */ _opcode_first == 3'b001) begin
 			if (/* JMP */ _opcode_second == 2'b11 && _opcode_third == 3'b111) assign_pc_in = {1'b1, _operand};
 			else begin
 				// JMPを除く pc_in = m (条件付き)
@@ -59,7 +59,7 @@ function [8:0] assign_pc_in;
 				else assign_pc_in = {1'b1, 8'b0};
 			end
 			// assign_pc_in = {1'b1, _opcode_second};
-		end
+			end
 		else assign_pc_in = {1'b1, 8'b0};
 	end
 endfunction
@@ -99,9 +99,9 @@ function [2:0] assign_asel_bsel_csel;
 	input [1:0] _operand_third;
 
 	begin
-		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01)
+		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01)
 			assign_asel_bsel_csel = {3'b0, 3'b0, opcode_third};
-		if (/* STのとき */ _opcode_first == 3'000 && _opcode_second == 2'b10)
+		if (/* STのとき */ _opcode_first == 3'b000 && _opcode_second == 2'b10)
 			assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
 		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
 			if (/* INC, DEC */opcode_second[1] == 1'b0) assign_asel_bsel_csel = {operand_first, 3'b0, opcode_first};
@@ -116,10 +116,10 @@ assign {asel, bsel, csel} = assign_asel_bsel_csel(opcode_first, opcode_second, o
 function [7:0] assign_cin;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
-	input [7:0] _data_out, _alu_out
+	input [7:0] _data_out, _alu_out;
 
 	begin
-		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01) assign_cin = _data_out;
+		if (/* LD: loadのとき*/ _opcode_first == 3'b000 && _opcode_second == 2'b01) assign_cin = _data_out;
 		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) assign_cin = _alu_out;
 		else assign_cin = 8'b0;
 	end
@@ -168,7 +168,7 @@ assign addr = select_addr( rst, fetcha , fetchb , execa, execb, pc_out, operand,
 
 // データバスのselect
 function [7:0] select_data_in;
-	input _execa;
+	input _execa, _execb;
 	input [7:0] _aout;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
@@ -181,7 +181,7 @@ function [7:0] select_data_in;
 	end
 endfunction
 
-assign data_in = select_data_in( execa, aout );
+assign data_in = assign_data_in(opcode_first, opcode_second, ira);
 
 // opcodeを分解する
 wire [1:0] opcode_second;
@@ -209,18 +209,6 @@ function [1:0] assign_ram;
 endfunction
 
 assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, opcode_second, opcode_third );
-
-function [7:0] assign_data_in;
-	input [2:0] _opcode_first;
-	input [1:0] _opcode_second;
-	input [7:0] _ira
-
-	begin
-		if (/* ST: storeのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b10) assign_data_in = _ira_out;
-		else assign_data_in = 8'b0;
-	end
-endfunction
-assign data_in = assign_data_in(opcode_first, opcode_second, ira);
 
 wire [7:0] opcode, operand;
 // fetchaでopcode, fetchbでoperandを入れる
@@ -291,7 +279,7 @@ function [2:0] assign_alu_ctrl;
 	input [1:0] _opcode_second;
 
 	begin
-		if (_opcode_first == 3'100) assign_alu_ctrl = {1'b1, _opcode_second};
+		if (_opcode_first == 3'b100) assign_alu_ctrl = {1'b1, _opcode_second};
 		else assign_alu_ctrl = 3'b0;
 	end
 endfunction
