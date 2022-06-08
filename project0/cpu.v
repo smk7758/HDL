@@ -167,7 +167,7 @@ endfunction
 assign addr = select_addr( rst, fetcha , fetchb , execa, execb, pc_out, operand, opcode);
 
 // データバスのselect
-function [7:0] select_data_in;
+function [7:0] assign_data_in;
 	input _execa, _execb;
 	input [7:0] _aout;
 	input [2:0] _opcode_first;
@@ -176,8 +176,8 @@ function [7:0] select_data_in;
 	begin
 		if (/* ST: storeのとき */
 			(_execa ^ _execb == 1'b1)
-			&& (_opcode_first == 3'b0 && _opcode_second == 2'b01)) select_data_in = _aout;
-		else select_data_in = 8'b0;
+			&& (_opcode_first == 3'b0 && _opcode_second == 2'b01)) assign_data_in = _aout;
+		else assign_data_in = 8'b0;
 	end
 endfunction
 
