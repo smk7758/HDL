@@ -168,20 +168,19 @@ assign addr = select_addr( rst, fetcha , fetchb , execa, execb, pc_out, operand,
 
 // データバスのselect
 function [7:0] assign_data_in;
-	input _execa, _execb;
-	input [7:0] _aout;
+	// input _execa, _execb;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
+	input [7:0] _aout; // aout
 
 	begin
-		if (/* ST: storeのとき */
-			(_execa ^ _execb == 1'b1)
-			&& (_opcode_first == 3'b0 && _opcode_second == 2'b01)) assign_data_in = _aout;
+		// (_execa ^ _execb == 1'b1)&&
+		if (/* ST: storeのとき */_opcode_first == 3'b0 && _opcode_second == 2'b10) assign_data_in = _aout;
 		else assign_data_in = 8'b0;
 	end
 endfunction
 
-assign data_in = assign_data_in(opcode_first, opcode_second, ira);
+assign data_in = assign_data_in(opcode_first, opcode_second, aout);
 
 // opcodeを分解する
 wire [1:0] opcode_second;
