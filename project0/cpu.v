@@ -60,9 +60,9 @@ assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_
 
 // register
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
-wire cload;
-wire [2:0] asel, bsel, csel;
-wire [7:0] cin, aout, bout;
+wire cload; // 立ち上がり時にcsel で選択された レジスタに cin の値が記憶される
+wire [2:0] asel, bsel, csel; // a (番地)
+wire [7:0] cin, aout, bout; // r[a] (値)
 register r(
 	clk, rst,
 	cload,
@@ -78,7 +78,31 @@ register r(
 //	output [7:0] aout, bout
 //);
 
-// TODO: now
+wire [2:0] operand_first, operand_second;
+wire [1:0] operand_third; // not using
+assign {operand_first, operand_second, operand_third} = operand;
+
+function [2:0] assign_asel_bsel_csel;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
+	input [2:0] _opcode_third;
+	input [2:0] _operand_first, operand_second;
+	input [1:0] _operand_third;
+
+	begin
+		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01)
+			assign_asel_bsel_csel = {3'b0, 3'b0, opcode_third};
+		if (/* STのとき */ _opcode_first == 3'000 && _opcode_second == 2'b10)
+			assign_asel_bsel_csel = {_opcode_third, 3'b0, 3'b0};
+		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) begin
+			if (/* INC, DEC */opcode_second[1] == 1'b0) assign_asel_bsel_csel = {operand_first, 3'b0, opcode_first};
+			else /* ADD, SUB */assign_asel_bsel_csel = {operand_first, operand_second, opcode_first};
+		end
+		else assign_asel_bsel_csel = 9'b0;
+	end
+endfunction
+
+assign {asel, bsel, csel} = assign_asel_bsel_csel(opcode_first, opcode_second, opcode_third, operand_first, operand_second, operand_third);
 
 function [7:0] assign_cin;
 	input [2:0] _opcode_first;
@@ -87,7 +111,7 @@ function [7:0] assign_cin;
 
 	begin
 		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01) assign_cin = _data_out;
-		else if (/* ALUの計算のとき */_opcode_first == 3'b100) assign_cin = _alu_out;
+		else if (/* ALUの計算のとき */ _opcode_first == 3'b100) assign_cin = _alu_out;
 		else assign_cin = 8'b0;
 	end
 endfunction
@@ -115,63 +139,40 @@ ram m(
 //		data_out // q: data_out
 //	);
 
-wire [7:0] ira, irb;
-generate
-	genvar i;
-	for (i = 0; i < 8; i = i+1) begin: genira
-		// 命令レジスタ ira: インストラクションレジスタ
-		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
-		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
-		dffe iras(
-			.d(data_out[i]) , // 入力信号（1-bit）
-			.clk(!clk), // クロック信号（1-bit）
-			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
-			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-			.ena(fetcha), // enable
-			.q(ira[i]) // out
-		);
-
-		// 命令レジスタ irb
-		dffe irbs(
-			.d(data_out[i]) , // 入力信号（1-bit）
-			.clk(!clk), // クロック信号（1-bit）
-			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
-			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
-			.ena(fetchb), // enable DFFEのenable（1-bit）
-			.q(irb[i]) // out
-		);
-	end
-endgenerate
-
-// RAMの読み書き位置をどのように指定するか → カウンタ回路を使用
+// RAMの読み書き位置をどのように指定するか → カウンタ回路を使用 (pcじゃダメ？)
 
 // アドレスバスのselect
 function [7:0] select_addr;
-	input _rst, _fetcha, _fetchb, _execa;
-	input [7:0] _pc_out, _ira;
+	input _rst, _fetcha, _fetchb, _execa, _execb;
+	input [7:0] _pc_out, _operand;
+	input [2:0] _opcode;
 
 	begin
 		if (_rst == 1'b1) select_addr = 8'b1;
 		else if (_fetcha ^ _fetchb == 1'b1) select_addr = _pc_out;
-		else if (_execa == 1'b1) select_addr = _ira;
+		else if ((_execa ^ _execb == 1'b1) && (opcode[7] == 0)) select_addr = _operand;
 		else select_addr = 8'b0;
 	end
 endfunction
 
-assign addr = select_addr( rst, fetcha , fetchb , execa, pc_out, ira_out);
+assign addr = select_addr( rst, fetcha , fetchb , execa, execb, pc_out, operand, opcode);
 
 // データバスのselect
 function [7:0] select_data_in;
 	input _execa;
-	input [7:0] _irb;
+	input [7:0] _aout;
+	input [2:0] _opcode_first;
+	input [1:0] _opcode_second;
 
 	begin
-		if (_execa == 1'b1) select_data_in = _irb;
+		if (/* ST: storeのとき */
+			(_execa ^ _execb == 1'b1)
+			&& (_opcode_first == 3'b0 && _opcode_second == 2'b01)) select_data_in = _aout;
 		else select_data_in = 8'b0;
 	end
 endfunction
 
-assign data_in = select_data_in( execa, irb );
+assign data_in = select_data_in( execa, aout );
 
 // opcodeを分解する
 wire [1:0] opcode_second;
@@ -217,14 +218,44 @@ wire [7:0] opcode, operand;
 assign opcode = ira; // TODO: 正しい？
 assign operand = irb;
 
+
+wire [7:0] ira, irb;
+generate
+	genvar i;
+	for (i = 0; i < 8; i = i+1) begin: genira
+		// 命令レジスタ ira: インストラクションレジスタ
+		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
+		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
+		dffe iras(
+			.d(data_out[i]) , // 入力信号（1-bit）
+			.clk(!clk), // クロック信号（1-bit）
+			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
+			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
+			.ena(fetcha), // enable
+			.q(ira[i]) // out
+		);
+
+		// 命令レジスタ irb
+		dffe irbs(
+			.d(data_out[i]) , // 入力信号（1-bit）
+			.clk(!clk), // クロック信号（1-bit）
+			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
+			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
+			.ena(fetchb), // enable DFFEのenable（1-bit）
+			.q(irb[i]) // out
+		);
+	end
+endgenerate
+
+
 // alu
 /* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire alu_ena;
 wire [1:0] alu_ctrl;
 
 wire [7:0] alu_ain, alu_bin;
-assign alu_ain = aout;
-assign alu_bin = bout;
+assign alu_ain = aout; // TODO: まだ
+assign alu_bin = bout; // TODO: まだ
 
 wire cflag, zflag; // output
 
