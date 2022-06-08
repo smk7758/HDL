@@ -61,14 +61,14 @@ assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_
 // register
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire cload;
-wire [2:0] ira_sel, irb_sel, irc_sel;
-wire [7:0] ira_out, irb_out, irc_in; // ira, irb, irc
+wire [2:0] asel, bsel, csel;
+wire [7:0] cin, aout, bout;
 register r(
 	clk, rst,
 	cload,
-	ira_sel, irb_sel, irc_sel,
-	irc_in,
-	ira_out, irb_out // out
+	asel, bsel, csel,
+	cin,
+	aout, bout // out
 );
 //module register (
 //	input clk , rst,
@@ -78,24 +78,22 @@ register r(
 //	output [7:0] aout, bout
 //);
 
-function [2:0] assign_irc_in;
-endfunction
+// assign asel = opcode_third;
 
-assign ira_sel = opcode_third;
+// TODO: now
 
-
-function [7:0] assign_irc_in;
+function [7:0] assign_cin;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [7:0] _data_out, _alu_out
 
 	begin
-		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01) assign_irc_in = _data_out;
-		else if (/* ALUの計算のとき */_opcode_first == 3'b100) assign_irc_in = _alu_out;
-		else assign_irc_in = 8'b0;
+		if (/* LD: loadのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b01) assign_cin = _data_out;
+		else if (/* ALUの計算のとき */_opcode_first == 3'b100) assign_cin = _alu_out;
+		else assign_cin = 8'b0;
 	end
 endfunction
-assign irc_in = assign_irc_in(opcode_first, opcode_second, data_out, alu_out);
+assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
 
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -178,19 +176,19 @@ assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, op
 function [7:0] assign_data_in;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
-	input [7:0] _ira_out
+	input [7:0] _ira
 
 	begin
 		if (/* ST: storeのとき*/ _opcode_first == 3'000 && _opcode_second == 2'b10) assign_data_in = _ira_out;
 		else assign_data_in = 8'b0;
 	end
 endfunction
-assign data_in = assign_data_in(opcode_first, opcode_second, ira_out);
+assign data_in = assign_data_in(opcode_first, opcode_second, ira);
 
 wire [7:0] opcode, operand;
 // fetchaでopcode, fetchbでoperandを入れる
-assign opcode = ira_out;
-assign operand = irb_out;
+assign opcode = ira; // TODO: 正しい？
+assign operand = irb;
 
 // alu
 /* こ こ で ， a l u に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -198,13 +196,12 @@ wire alu_ena;
 wire [1:0] alu_ctrl;
 
 wire [7:0] alu_ain, alu_bin;
-assign alu_ain = ira_out;
-assign alu_bin = irb_out;
+assign alu_ain = aout;
+assign alu_bin = bout;
 
 wire cflag, zflag; // output
 
 wire [7:0] alu_out;
-assign irc_in = alu_out;
 
 alu a(
 	clk, rst,
