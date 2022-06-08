@@ -78,8 +78,6 @@ register r(
 //	output [7:0] aout, bout
 //);
 
-// assign asel = opcode_third;
-
 // TODO: now
 
 function [7:0] assign_cin;
@@ -94,6 +92,7 @@ function [7:0] assign_cin;
 	end
 endfunction
 assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
+
 
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -116,13 +115,41 @@ ram m(
 //		data_out // q: data_out
 //	);
 
+wire [7:0] ira, irb;
+generate
+	genvar i;
+	for (i = 0; i < 8; i = i+1) begin: genira
+		// 命令レジスタ ira: インストラクションレジスタ
+		// D F F E を 8 つ 作 成 ．D Flip Flop with Enable, DFFE
+		// 入 力 と 出 力 の 信 号 の 各 ビ ッ ト を 接 続 ．
+		dffe iras(
+			.d(data_out[i]) , // 入力信号（1-bit）
+			.clk(!clk), // クロック信号（1-bit）
+			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
+			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
+			.ena(fetcha), // enable
+			.q(ira[i]) // out
+		);
+
+		// 命令レジスタ irb
+		dffe irbs(
+			.d(data_out[i]) , // 入力信号（1-bit）
+			.clk(!clk), // クロック信号（1-bit）
+			.clrn(!rst), // clear negative：負論理で定義されたクリア（1-bit）
+			.prn(1'b1), // preset negative：負論理で定義されたプリセット（1-bit）
+			.ena(fetchb), // enable DFFEのenable（1-bit）
+			.q(irb[i]) // out
+		);
+	end
+endgenerate
+
 // RAMの読み書き位置をどのように指定するか → カウンタ回路を使用
 
 // アドレスバスのselect
 function [7:0] select_addr;
 	input _rst, _fetcha, _fetchb, _execa;
 	input [7:0] _pc_out, _ira;
-	
+
 	begin
 		if (_rst == 1'b1) select_addr = 8'b1;
 		else if (_fetcha ^ _fetchb == 1'b1) select_addr = _pc_out;
@@ -137,7 +164,7 @@ assign addr = select_addr( rst, fetcha , fetchb , execa, pc_out, ira_out);
 function [7:0] select_data_in;
 	input _execa;
 	input [7:0] _irb;
-	
+
 	begin
 		if (_execa == 1'b1) select_data_in = _irb;
 		else select_data_in = 8'b0;
