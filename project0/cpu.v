@@ -40,6 +40,7 @@ function [8:0] assign_pc_in;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [2:0] _opcode_third;
+	input [7:0] _operand
 	input _cflag, _zflag;
 
 	begin
@@ -54,13 +55,13 @@ function [8:0] assign_pc_in;
 	end
 endfunction
 
-assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_third, cflag, zflag);
+assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_third, operand, cflag, zflag);
 
 // register
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire cload;
 wire [3:0] asel, bsel, csel;
-wire [7:0] cin, aout, bout;
+wire [7:0] cin, aout, bout; // ira, irb, irc
 register r(
 	clk, rst,
 	cload,
@@ -91,16 +92,17 @@ assign cin = assign_cin(opcode_first, opcode_second, data_out, alu_out);
 
 wire rden, wren;
 
-
 // ram
 /* こ こ で ， r a m に 接 続 さ れ る 信 号 線 を 宣 言 */
+wire [7:0] opcode, operand;
+
 ram m(
 	addr, clk,
 	data_in,
 	rden, wren,
 	data_out // out
 );
-//	// RAM たち下がり時
+//	RAM たち下がり時?
 //	// module ram ( address , clock , data , rden , wren , q);
 //	ram r(
 //		addr,
@@ -110,6 +112,63 @@ ram m(
 //		execa, // write enable
 //		data_out // q: data_out
 //	);
+
+// RAMの読み書き位置をどのように指定するか → カウンタ回路を使用
+
+// アドレスバスのselect
+function [7:0] select_addr;
+	input _rst, _fetcha, _fetchb, _execa;
+	input [7:0] _pc_out, _ira;
+	
+	begin
+		if (_rst == 1'b1) select_addr = 8'b1;
+		else if (_fetcha ^ _fetchb == 1'b1) select_addr = _pc_out;
+		else if (_execa == 1'b1) select_addr = _ira;
+		else select_addr = 8'b0;
+	end
+endfunction
+
+assign addr = select_addr( rst, fetcha , fetchb , execa, pc_out, aout);
+
+// opcode, operand を assign, addrは半クロックごとに+1する
+// TODO: opcode, operand 大丈夫？
+always @ (posedge clk) begin // clock の立ち上がりのタイミングでalways文が起動
+	if (rst == 1'b1)
+		// addr <= 8'b0;
+		opcode <= 8'b0;
+		// operand <= 8'b0;
+	else begin
+		// if (fetcha ^ fetchb == 1'b1) addr = pc_out;
+		// else if (execa == 1'b1) addr = aout;
+		// else addr = 8'b0;
+		opcode <= data_out;
+		// operand <= data_out;
+	end
+end
+
+always @ (negedge clk) begin // clock のたち下がりのタイミングでalways文が起動
+	if (rst == 1'b1)
+		// addr <= 8'b0;
+		// opcode <= 8'b0;
+		operand <= 8'b0;
+	else
+		addr <= addr + 8'b0000_0001; // neg edgeのときにaddr+1する
+		// opcode = data_out;
+		operand <= data_out;
+end
+
+// データバスのselect
+function [7:0] select_data_in;
+	input _execa;
+	input [7:0] _irb;
+	
+	begin
+		if (_execa == 1'b1) select_data_in = _irb;
+		else select_data_in = 8'b0;
+	end
+endfunction
+
+assign data_in = select_data_in( execa, irb );
 
 // opcodeを分解する
 wire [1:0] opcode_second;
