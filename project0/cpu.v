@@ -5,8 +5,8 @@ module cpu (
 	,
 //	output [7:0] pc_in, pc_out // TODO: 検証
 //	,
-//	output [7:0] opcode, operand // TODO: 検証
-//	,
+	output [7:0] opcode_, operand_ // TODO: 検証
+	,
 	output rden, wren // TODO: 検証
 	,
 	output [7:0] aout
@@ -21,6 +21,8 @@ module cpu (
 );
 assign opcode_third_ = opcode_third;
 // assign asel_ = asel;
+assign opcode_ = opcode;
+assign operand_ = operand;
 
 // stage
 /* こ こ で ， s t a g e に 接 続 さ れ る 信 号 線 を 宣 言 */
