@@ -14,7 +14,13 @@ module cpu (
 	output [7:0] bout
 	,
 	output [7:0] cin // r[a] (値)  // TODO: 検証
+	,
+	output [2:0] opcode_third_
+	,
+	output [2:0] asel_
 );
+assign opcode_third_ = opcode_third;
+// assign asel_ = asel;
 
 // stage
 /* こ こ で ， s t a g e に 接 続 さ れ る 信 号 線 を 宣 言 */
@@ -88,7 +94,7 @@ wire cload; // 立ち上がり時にcsel で選択された レジスタに cin 
 wire [2:0] asel, bsel, csel; // a (番地)
 // wire [7:0] aout, bout, cin; // r[a] (値)  // TODO: 検証
 register r(
-	clk, rst,
+	!clk, rst,
 	cload,
 	asel, bsel, csel,
 	cin,
@@ -106,7 +112,7 @@ wire [2:0] operand_first, operand_second;
 wire [1:0] operand_third; // not using
 assign {operand_first, operand_second, operand_third} = operand;
 
-function [2:0] assign_asel_bsel_csel;
+function [8:0] assign_asel_bsel_csel;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [2:0] _opcode_third;
@@ -180,21 +186,23 @@ endfunction
 
 assign addr = select_addr( rst, fetcha , fetchb , execa, execb, pc_out, operand, opcode);
 
+// TODO: now
 // データバスのselect
 function [7:0] assign_data_in;
-	// input _execa, _execb;
+	input _execa, _execb;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [7:0] _aout; // aout
 
 	begin
-		// (_execa ^ _execb == 1'b1)&&
-		if (/* ST: storeのとき */_opcode_first == 3'b0 && _opcode_second == 2'b10) assign_data_in = _aout;
+		if (/* ST: storeのとき */ (_execa ^ _execb == 1'b1) && (_opcode_first == 3'b0 && _opcode_second == 2'b10)) assign_data_in = _aout;
 		else assign_data_in = 8'b0;
 	end
 endfunction
 
-assign data_in = assign_data_in(opcode_first, opcode_second, aout);
+assign data_in = assign_data_in(execa, execb, opcode_first, opcode_second, aout);
+// assign data_in = aout;
+// assign data_in = 8'b1111_1111;
 
 // opcodeを分解する
 wire [1:0] opcode_second;
