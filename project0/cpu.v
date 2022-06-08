@@ -3,11 +3,17 @@ module cpu (
 	output [7:0] addr, data_in, data_out,
 	output waits, fetcha, fetchb, execa, execb
 	,
-	output [7:0] pc_in, pc_out // TODO: 検証
-	,
-	output [7:0] opcode, operand // TODO: 検証
-	,
+//	output [7:0] pc_in, pc_out // TODO: 検証
+//	,
+//	output [7:0] opcode, operand // TODO: 検証
+//	,
 	output rden, wren // TODO: 検証
+	,
+	output [7:0] aout
+	,
+	output [7:0] bout
+	,
+	output [7:0] cin // r[a] (値)  // TODO: 検証
 );
 
 // stage
@@ -24,7 +30,7 @@ stage s(
 // pc
 /* こ こ で ， p c に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire pc_in_ena; // pc_inを有効にするかどうか
-//wire [7:0] pc_in, pc_out; // TODO: 検証
+wire [7:0] pc_in, pc_out; // TODO: 検証
 pc p(
 	clk,
 	rst,
@@ -80,7 +86,7 @@ assign {pc_in_ena, pc_in} = assign_pc_in(rst, halt, opcode, opcode_first, opcode
 /* こ こ で ， r e g i s t e r に 接 続 さ れ る 信 号 線 を 宣 言 */
 wire cload; // 立ち上がり時にcsel で選択された レジスタに cin の値が記憶される
 wire [2:0] asel, bsel, csel; // a (番地)
-wire [7:0] cin, aout, bout; // r[a] (値)
+// wire [7:0] aout, bout, cin; // r[a] (値)  // TODO: 検証
 register r(
 	clk, rst,
 	cload,
@@ -219,7 +225,7 @@ assign {rden, wren} = assign_ram( fetcha, fetchb, execa, execb, opcode_first, op
 
 
 //  ～～ opcode, oprand ～～
-// wire [7:0] opcode, operand; // TODO: 検証
+ wire [7:0] opcode, operand; // TODO: 検証
 // fetchaでopcode, fetchbでoperandを入れる
 assign opcode = ira; // TODO: 正しい？
 assign operand = irb;
