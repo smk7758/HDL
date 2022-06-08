@@ -301,7 +301,7 @@ endgenerate
 wire alu_ena;
 wire [1:0] alu_ctrl;
 
-// wire [7:0] alu_ain, alu_bin;
+wire [7:0] alu_ain, alu_bin;
 // function [15:0] assign_alu_input;
 // 	input [7:0] _aout, _bout;
 // 	input _execa, _execb;
@@ -311,8 +311,8 @@ wire [1:0] alu_ctrl;
 // 		else assign_alu_input = 16'b0;
 // 	end
 // endfunction
-// assign alu_ain = aout; // TODO: まだ
-// assign alu_bin = bout; // TODO: まだ
+assign alu_ain = (execa ^ execb == 1'b1) ? aout : 8'b0; // TODO: まだ
+assign alu_bin = (execa ^ execb == 1'b1) ? bout : 8'b0; // TODO: まだ
 // assign {alu_ain, alu_bin} = assign_alu_input(aout, bout, execa, execb);
 
 wire cflag, zflag; // output
@@ -322,9 +322,9 @@ wire [7:0] alu_out;
 alu a(
 	clk, rst,
 	alu_ena, alu_ctrl,
-	// alu_ain, alu_bin,
-	(execa ^ execb == 1'b1) ? aout : 8'b0, // alu_ain
-	(execa ^ execb == 1'b1) ? bout : 8'b0, // alu_bin
+	alu_ain, alu_bin,
+	// (execa ^ execb == 1'b1) ? aout : 8'b0, // alu_ain
+	// (execa ^ execb == 1'b1) ? bout : 8'b0, // alu_bin
 	// 8'b0, 8'b0,
 	cflag, zflag, // out
 	alu_out // sout
