@@ -37,6 +37,9 @@ pc p(
 //);
 
 function [8:0] assign_pc_in;
+	// input [7:0] pc_in;
+	input _halt;
+	input [7:0] _opcode;
 	input [2:0] _opcode_first;
 	input [1:0] _opcode_second;
 	input [2:0] _opcode_third;
@@ -44,18 +47,24 @@ function [8:0] assign_pc_in;
 	input _cflag, _zflag;
 
 	begin
-		if (/* JC～JMPまで */ _opcode_first == 3'001) begin
-			if (/* JMP */ _opcode_second == 2'b11) assign_pc_in = {1'b1, }
+		if (/* HLT */_opcode == 8'b0 && _halt == 1'b1) assign_pc_in = {0'b0, 8'b0}; // 命令を読み込んでから停止
+		else if (/* JC～JMPまで */ _opcode_first == 3'001) begin
+			if (/* JMP */ _opcode_second == 2'b11 && _opcode_third == 3'b111) assign_pc_in = {1'b1, _operand};
 			else begin
-				
+				// JMPを除く pc_in = m (条件付き)
+				if (/* JC */ _opcode_third == 3'b0_00 && _cflag == 1'b1) assign_pc_in = {1'b1, operand};
+				if (/* JNC */ _opcode_third == 3'b0_01 && _cflag != 1'b1) assign_pc_in = {1'b1, operand};
+				if (/* JZ */ _opcode_third == 3'b0_10 && _zflag == 1'b1) assign_pc_in = {1'b1, operand};
+				if (/* JNC */ _opcode_third == 3'b0_11 && _zflag != 1'b1) assign_pc_in = {1'b1, operand};
+				else assign_pc_in = {1'b1, 8'b0};
 			end
-			// assign_alu_ctrl = {1'b1, _opcode_second};
+			// assign_pc_in = {1'b1, _opcode_second};
 		end
-		else assign_alu_ctrl = 3'b0;
+		else assign_pc_in = {1'b1, 8'b0};
 	end
 endfunction
 
-assign {pc_in_ena, pc_in} = assign_alu_ctrl(opcode_first, opcode_second, opcode_third, operand, cflag, zflag);
+assign {pc_in_ena, pc_in} = assign_pc_in(halt, opcode, opcode_first, opcode_second, opcode_third, operand, cflag, zflag);
 
 
 // register
